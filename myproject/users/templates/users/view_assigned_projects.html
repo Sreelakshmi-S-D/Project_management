@@ -1,0 +1,57 @@
+{% extends 'users/shared/base.html' %}
+
+
+
+{% block content %}
+
+<section class="section dashboard container " style="margin-left: 295px; margin-top: 100px; width: 78%;">
+    <div class="row">
+
+        <div class="col">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card recent-sales overflow-auto">
+                        <div class="card-body">
+
+                            <h5 class="card-title"></h5>
+                            <!--  -->
+                            <table class="table">
+
+                                <tr>
+                                    <th>TITLE</th>
+                                    <th>DESCRIPTION</th>
+                                    <th>CREATE DATE</th>
+                                    <th>DUE DATE</th>
+                                </tr>
+
+
+                                {% for pr in project %}
+                            
+
+                                <tr>
+                                    <td>{{pr.project.project_title}}</td>
+                                    <td>{{pr.project.description}}</td>
+                                    <td>{{pr.project.create_date}}</td>
+                                    <td>{{pr.project.due_date}}</td>
+                                </tr>
+
+                                {% endfor %}
+
+
+
+
+                       
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</section>
+
+
+{% endblock content %}

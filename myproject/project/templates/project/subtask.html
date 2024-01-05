@@ -1,0 +1,188 @@
+{% extends 'users/shared/base.html' %}
+
+{% block content %}
+<section class="section dashboard container justify-content-center d-flex align-items-center " style=" margin-top: 100px; ;">
+    
+    <div class="row">
+
+      <div class="col">
+
+        <div class="row">
+          <div class="col-12">
+            <div class="card recent-sales overflow-auto">
+              <div class="card-body">
+                <a href="{% url 'view_tasks' %}"><i class="bi bi-arrow-left" style="font-size:30px;"></i></a>
+
+            <div class="container">
+                <table class="table">
+                    <tr>
+                        <th>TASK</th>
+                        <th>SUBTASK</th>
+                        <th>STATUS</th>
+                        <th>EDIT</th>
+                        <th>DELETE</th>
+
+                    </tr>
+                
+                    {% for i in sub_task %}
+                
+                    <tr>
+                        <td>{{i.task.task_title}}</td>
+                        <td>{{i.title}}</td>
+                        <td>
+                            {% if i.status == 'Pending' %}
+                    <span class="text-primary">{{ i.status }}</span>
+                    {% elif i.status == 'In progress' %}
+
+                    <span class="text-warning">{{ i.status }}</span>
+
+                    {% elif i.status == 'Completed' %}
+                    <span class="text-success">{{ i.status }}</span>
+
+                    {% else %}
+                    <p> - </p>
+                    {% endif %}
+                            
+                        </td>
+                        <td>
+                            <a href="/project/update_subtask/{{i.id}}" class="btn btn-warning edit_subtask-btn" data-bs-toggle="modal" data-bs-target="#editsubtaskModal" data-subtask-id="{{i.id}}"><i
+                                class="bi bi-pencil-fill"></i></a>
+                            </td>
+                            <td>
+                            <a href="/project/delete_subtask/{{i.id}}" class="btn btn-danger" onclick = "return confirm('Do you want to delete?')"><i class="bi bi-trash"></i></a>
+                        </td>
+                
+                    </tr>
+                    {% endfor %}
+                
+                
+                
+                </table>
+        </div>
+
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+      
+    </div>
+  </section>
+
+  <!-- edit subtask -->
+
+  <div class="modal fade" id="editsubtaskModal" tabindex="-1" aria-labelledby="addFormModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="formModalLabel">Edit Sub Task</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+  
+          <div class="container">
+            <span id="project2"></span>
+            <form class="form-detail" action="" method="post" id="edit_subtask">
+                {% csrf_token %}
+        
+                <!-- {{sub.as_p}} -->
+        
+                <div class="form-row">
+                    <label for="project">Task</label>  
+                    <input type="text" name="task" id="es_task"  class="input-text inp" readonly required>
+                </div>
+        
+                <div class="form-row">
+                    <label for="description">SubTask</label>  
+                    <input type="text" name="e_subtask" id="es_subtask" class="input-text inp" required>
+                </div>
+        
+                <div class="form-row mb-2">
+                    <label for="status" >Status</label>
+                    <select name="status" id="status" class="form-select">
+                        <option value="Pending">Pending</option>
+                        <option value="In progress">In progress</option>
+                        <option value="Completed">Completed</option>
+        
+                    </select>
+                </div>
+                
+                
+                <div class="form-row-last">
+                    <input type="submit" id="editsubtasksubmit" name="save" class="register" value="Save">
+                </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js">
+  </script>
+
+  <script>
+    const edittaskbtn = document.querySelectorAll('.edit_subtask-btn');
+  var subtaskIdr;
+  edittaskbtn.forEach(btn => {
+    btn.addEventListener('click', (event) => {
+        const task_Id = btn.getAttribute('data-subtask-id');
+        subtaskIdr = task_Id
+          console.log(subtaskIdr);
+      $.ajax({
+        url: '/project/get_subtask_data/'+ subtaskIdr,
+        method: 'GET',
+        dataType: 'json',
+        success: function (response) {
+        //   alert('sss')
+        console.log(response)
+              
+        $('#edit_subtask #es_task').val(response.task_name);
+        $('#edit_subtask #es_subtask').val(response.subtask_name);
+        },
+        error: function (xhr, status, error) {
+
+          console.error('Error fetching project data:', error);
+        }
+      });
+    });
+  });
+
+  $('#editsubtasksubmit').off('click').on('click', function (event) {
+    event.preventDefault();
+    $.ajax({
+
+      url: '/project/update_subtask/' + subtaskIdr,
+      method: 'POST',
+      data: $('#edit_subtask').serialize(),
+      dataType: 'json',
+      success: function (response) {
+
+        alert("SubTask updated");
+        $('#edit_task').trigger('.data-bs-dismiss');
+        location.reload(true);
+
+      },
+      error: function (xhr, status, error) {
+        console.log(xhr.status);
+        if (xhr.status === 400) {
+          var errors = xhr.responseJSON.errors;
+          console.log(errors);
+          for (var field in errors) {
+            var errorMessages = Array.isArray(errors[field]) ? errors[field].join('<br>') : errors[field];
+            $('#' + field + '-error').html(errorMessages);
+          }
+        } else {
+          console.error('Error editing project data:', error);
+        }
+      }
+    });
+});
+  </script>
+
+{% endblock content %}
+
+
+

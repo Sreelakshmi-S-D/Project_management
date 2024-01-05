@@ -1,0 +1,322 @@
+{% extends 'users/shared/base.html' %}
+
+{% block content %}
+
+
+<section class="section dashboard container " style="margin-left: 295px; margin-top: 100px; width: 78%;">
+    <div class="row">
+
+        <div class="col">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card recent-sales overflow-auto">
+                        <div class="card-body">
+
+                            <h5 class="card-title"></h5>
+
+                            <div class="justify-content-end d-flex align-items-end mb-2">
+                                <a href="" class="btn add_list-btn" data-bs-toggle="modal" data-bs-target="#addlistModal" style="background-color: #6f42c1; color: white;">Add New<i class="bi bi-plus"></i></a>
+                            </div>
+                            <form class="mt-5" method="post">
+                                {% csrf_token %}
+                                <div class="row">
+                                  <div class="col-3">
+                                    <input type="text" class="form-control" placeholder="Enter name" name="name" size="5" id="lst_name"
+                                      onkeyup="myFunction()">
+                                  </div>
+                                </div>
+                              </form>
+                            <table class="table table-bordered" id="listTable">
+                                <tr>
+                                    <th>List</th>
+                                    <th>Project</th>
+                                    <th>Edit</th>
+                                    <th>Delete</th>
+                                </tr>
+             
+                                {% for li in view %}
+                                <tr>
+                                    <td>{{li.title}}</td>
+                                    
+                                    <td>{{ li.project.project_title }}</td>
+                                    <td>
+                                        <a href="/project/update_list/{{li.id}}" class="btn btn-warning edit_list-btn" data-bs-toggle="modal" data-bs-target="#editlistModal" data-project-id="{{li.id}}"><i
+                                                class="bi bi-pencil-fill"></i></a>
+                                    </td>
+                                    
+                                    <td>
+                                        <a href="/project/delete_list/{{li.id}}" class="btn btn-danger"><i
+                                                class="bi bi-trash"></i></a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                                
+                            </table>
+
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</section>
+
+
+<!-- add list -->
+<div class="modal fade" id="addlistModal" tabindex="-1" aria-labelledby="addFormModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="formModalLabel">Add List</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+  
+          <div class="container">
+            <span id="project2"></span>
+            <form class="form-detail mt-5" action="" method="post" id="list_add">
+                {% csrf_token %}
+                <span id="project2"></span>
+                <div class="form-row mb-2">
+                    <label for="list_title">Title</label>
+                    <input type="text" name="lst" id="lst" class="input-text inp" >
+                </div>
+                <select class="form-select" name="project" id="select_list">
+                  
+                </select>
+        
+                <div class="form-row-last">
+                    <input type="submit" name="save" class="register" value="Save">
+                </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- edit list -->
+
+  <div class="modal fade" id="editlistModal" tabindex="-1" aria-labelledby="addFormModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="formModalLabel">Edit List</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+  
+          <div class="container">
+            <span id="project_L2"></span>
+            <form class="form-detail mt-5" action="" method="post" id="edit_list">
+                {% csrf_token %}
+                <span id="project2"></span>
+
+                <div class="form-row mb-2">
+                    <label for="project">Project</label>
+                    <input type="hidden" id="pr_list" >
+                    <input type="text" name="project" id="project_list"  class="input-text inp" readonly>
+                </div>
+
+                <div class="form-row mb-2">
+                    <label for="list">List</label> <br>
+                    <input type="text" name="list_name" id="list_name1"  class="input-text inp" required>
+                </div>
+        
+                
+                
+                <div class="form-row-last">
+                    <input type="submit" name="save" class="register" id="editlistsubmit" value="Save">
+                </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js">
+  </script>
+
+  <script>
+
+
+function myFunction() {
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("lst_name");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("listTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) {
+      td = tr[i].getElementsByTagName("td")[0];
+      if (td) {
+        txtValue = td.textContent || td.innerText;
+        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+          tr[i].style.display = "";
+        } else {
+          tr[i].style.display = "none";
+        }
+      }
+    }
+  }
+
+
+    jQuery(document).ready(function ($) {
+      // Your jQuery code here
+      $('#lst').keyup(function () {
+
+          data = { 'lst': $(this).val(),'project':$('#select_list').val() };
+          console.log($('#select_list').val());
+          $.get('/project/check_list/', data, function (res) {
+              console.log(res);
+              if (res.status) {
+                  $('#project2').text('*This category is already added for this project');
+              }
+              else {
+                  $('#project2').text(' ');
+              }
+          });
+      });
+  });
+
+  const addlistbtn = document.querySelectorAll('.add_list-btn');
+  var projectIdr;
+  addlistbtn.forEach(btn => {
+    btn.addEventListener('click', (event) => {
+      $.ajax({
+        url: '/project/add_list/' ,
+        method: 'GET',
+        dataType: 'json',
+        success: function (response) {
+        //   alert('sss')
+        console.log(response.project)
+              
+        var selectListElement = "";
+                for (let item of response.project) {
+                    selectListElement += `<option value='${item.project_id}'>${item.project_name}</option>`;
+                }
+
+        document.getElementById('select_list').innerHTML = selectListElement;
+
+        },
+        error: function (xhr, status, error) {
+
+          console.error('Error fetching project data:', error);
+        }
+      });
+    });
+  });
+
+
+  $('#list_add').submit(function(event) {
+        event.preventDefault();
+        var form = $(this); 
+        $.ajax({
+            url: '/project/add_list/' ,
+            type: 'POST',
+            data: $(this).serialize(),
+            dataType: 'json', 
+            success: function(response) {
+
+                alert('New List Added!');
+                location.reload(true);
+                form.trigger('reset');
+                form.trigger('.data-bs-dismiss');
+                
+                
+            },
+          
+        });
+      });
+
+
+      jQuery(document).ready(function ($) {
+        // Your jQuery code here
+        $('#list_name1').keyup(function () {
+            data = { 'lst': $(this).val(),'project':$('#pr_list').val() };
+            console.log(data);
+            $.get('/project/check_list/', data, function (res) {
+                console.log(res);
+                if (res.status) {
+                    $('#project_L2').text('*This category is already added for this project');
+                }
+                else {
+                    $('#project_L2').text(' ');
+                }
+            });
+        });
+    });
+    
+      const editlistbtn = document.querySelectorAll('.edit_list-btn');
+  var projectIdr;
+  editlistbtn.forEach(btn => {
+    btn.addEventListener('click', (event) => {
+        const project_Id = btn.getAttribute('data-project-id');
+          projectIdr = project_Id
+          console.log(projectIdr);
+      $.ajax({
+        url: '/project/get_list/'+ projectIdr,
+        method: 'GET',
+        dataType: 'json',
+        success: function (response) {
+        //   alert('sss')
+        console.log(response)
+              
+        $('#edit_list #pr_list').val(response.project_id);
+        $('#edit_list #project_list').val(response.project_name);
+        $('#edit_list #list_name1').val(response.list_name);
+
+
+        },
+        error: function (xhr, status, error) {
+
+          console.error('Error fetching project data:', error);
+        }
+      });
+    });
+  });
+
+  $('#editlistsubmit').off('click').on('click', function (event) {
+    event.preventDefault();
+
+
+    $.ajax({
+
+      url: '/project/update_list/' + projectIdr,
+      method: 'POST',
+      data: $('#edit_list').serialize(),
+      dataType: 'json',
+      success: function (response) {
+
+        alert("List updated");
+        $('#edit_list').trigger('.data-bs-dismiss');
+        location.reload(true);
+
+      },
+      error: function (xhr, status, error) {
+        console.log(xhr.status);
+        if (xhr.status === 400) {
+          var errors = xhr.responseJSON.errors;
+          console.log(errors);
+          for (var field in errors) {
+            var errorMessages = Array.isArray(errors[field]) ? errors[field].join('<br>') : errors[field];
+            $('#' + field + '-error').html(errorMessages);
+          }
+        } else {
+          console.error('Error editing project data:', error);
+        }
+      }
+    });
+});
+
+
+
+  
+  </script>
+
+{% endblock content %}

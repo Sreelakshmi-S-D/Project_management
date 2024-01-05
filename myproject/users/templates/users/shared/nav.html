@@ -1,0 +1,175 @@
+  <!-- ======= Header ======= -->
+  <header id="header" class="header fixed-top d-flex align-items-center">
+
+    <div class="d-flex align-items-center justify-content-between">
+      <a href="#" class="logo d-flex align-items-center">
+        <!-- <img src="/static/assets/img/logo.png" alt=""> -->
+        <span class="d-none d-lg-block">Project Management</span>
+      </a>
+      <i class="bi bi-list toggle-sidebar-btn"></i>
+    </div><!-- End Logo -->
+
+  <!-- End Search Bar -->
+
+    <nav class="header-nav ms-auto">
+      <ul class="d-flex align-items-center">
+
+
+
+        <li class="nav-item dropdown pe-3">
+
+          <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+            <!-- <img src="/static/assets/img/20230814095643.jpg" alt="Profile" class="rounded-circle"> -->
+            {% if user %}
+            
+            <div class="m-5" style="color: rgb(7, 7, 7);">Welcome, {{user.Fullname}}</div>
+
+    {% endif %}
+
+          </a><!-- End Profile Iamge Icon -->
+
+        </li><!-- End Profile Nav -->
+
+      </ul>
+    </nav><!-- End Icons Navigation -->
+
+  </header><!-- End Header -->
+
+  <!-- ======= Sidebar ======= -->
+
+  {% if user is not None and not user.is_superuser %}
+
+  <aside id="sidebar" class="sidebar">
+
+    <ul class="sidebar-nav" id="sidebar-nav">
+
+      <li class="nav-item">
+        <a class="nav-link " href="{% url 'user_dashboard' %}">
+          <i class="bi bi-grid"></i>
+          <span>Dashboard</span>
+        </a>
+      </li>
+      <!-- End Dashboard Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link"  href="{% url 'user_profile' %}">
+          <i class="bi bi-person"></i><span>Profile</span>
+        </a>
+
+      </li>
+
+      <li class="nav-item">
+
+        <a class="nav-link "   href="{% url 'view_assigned_projects' %}">
+          <i class="bi bi-menu-button-wide"></i><span>Projects</span>
+        </a>
+
+
+      </li><!-- End Components Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'view_list' %}">
+          <i class="bi bi-menu-button-wide"></i><span>List</span>
+        </a>
+      </li>
+
+
+      <li class="nav-item">
+        <a class="nav-link"  href="{% url 'view_tasks' %}">
+          <i class="bi bi-menu-button-wide"></i><span>Task</span>
+        </a>
+
+      </li><!-- End Forms Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link " href="{% url 'change_password' %}">
+          <i class="bi bi-lock"></i><span>Change Password</span>
+        </a>
+
+      </li><!-- End Tables Nav -->
+
+        <hr></hr>
+
+
+
+
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'user_logout' %}" onclick = "return confirm('Do you want to logout?')">
+          <i class="bi bi-box-arrow-in-right"></i>
+          <span>Logout</span>
+        </a>
+      </li><!-- End Login Page Nav -->
+
+         </ul>
+
+  </aside><!-- End Sidebar-->
+
+  {% else %}
+
+  <aside id="sidebar" class="sidebar">
+
+    <ul class="sidebar-nav" id="sidebar-nav">
+
+      <li class="nav-item">
+        <a class="nav-link " href="{% url 'admin_dashboard' %}">
+          <i class="bi bi-grid"></i>
+          <span>Dashboard</span>
+        </a>
+      </li>
+      <!-- End Dashboard Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link"  href="{% url 'user_profile' %}">
+          <i class="bi bi-person"></i><span>Profile</span>
+        </a>
+
+      </li>
+
+      <li class="nav-item">
+
+        <a class="nav-link " href="{% url 'view_projects' %}">
+          <i class="bi bi-menu-button-wide"></i><span>Projects</span>
+        </a>
+
+
+      </li><!-- End Components Nav -->
+
+      <li class="nav-item">
+
+        <a class="nav-link " href="{% url 'admin_view_tasks' %}">
+          <i class="bi bi-menu-button-wide"></i><span>Task</span>
+        </a>
+
+
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link "  href="{% url 'view_staffs' %}">
+          <i class="bi bi-people"></i><span>Staffs</span>
+        </a>
+
+      </li><!-- End Forms Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link " href="{% url 'change_password' %}">
+          <i class="bi bi-lock"></i><span>Change Password</span>
+        </a>
+
+      </li><!-- End Tables Nav -->
+
+        <hr></hr>
+
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'user_logout' %}" onclick = "return confirm('Do you want to logout?')">
+          <i class="bi bi-box-arrow-in-right"></i>
+          <span>Logout</span>
+        </a>
+      </li><!-- End Login Page Nav -->
+
+         </ul>
+
+  </aside>
+
+  {% endif %}

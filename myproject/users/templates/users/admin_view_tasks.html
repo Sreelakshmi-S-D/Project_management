@@ -1,0 +1,257 @@
+{% extends 'users/shared/base.html' %}
+
+
+
+{% block content %}
+
+
+<section class="section dashboard container " style="margin-left: 295px; margin-top: 100px; width: 78%;">
+  <div class="row">
+
+    <div class="col">
+      <div class="row">
+        <div class="col-12">
+          <div class="card recent-sales overflow-auto">
+            <div class="card-body">
+
+              <!-- <select name="sortoption" id="mySelect" class="mt-4">
+                <option value="">Select sorting option</option>
+                <option value="category_asc">Sort by Category (Ascending)</option>
+                <option value="category_desc">Sort by Category (Descending)</option>
+                <option value="status_asc">Sort by Status (Ascending)</option>
+                <option value="status_desc">Sort by Status (Descending)</option>
+
+              </select> -->
+
+            
+
+              <form method="get" id="filter-form" action="">
+         
+                <div class="justify-content-start d-flex align-items-start p-1 m-1">
+                  <label for="" class="ms-2">Category:</label>
+                  {{ tfill.category }}
+
+                  <label for="" class="ms-2">Project Status:</label>
+                  {{ tfill.statusoftask }}
+
+                  <label for="" class="ms-2">From:</label>
+                  {{ tfill.taskfromdate }}
+                  <label for="" class="ms-2">To:</label>
+                  {{ tfill.tasktodate }}
+                  <button type="submit" class="btn btn-primary ms-3" id="filterButton"><i
+                      class="bi bi-search"></i></button>
+                </div>
+
+
+              </form>
+
+              <table class="table table-bordered">
+                <tr>
+                <th>PROJECT</th>
+                  <th>Category</th>
+                  <th>TITLE</th>
+                  <th>DESCRIPTION</th>
+                  <th>CREATE DATE</th>
+                  <th>DUE DATE</th>
+                  <th>STATUS</th>
+                </tr>
+                <tbody id="dataTable">
+                
+                {% for lst in view %}
+                    
+                    
+                <tr>
+                    <td>{{lst.list.project.project_title}}</td>
+                  <td >{{ lst.list.title }}</td>
+                  <td>{{lst.task_title}}</td>
+                  <td>{{lst.description}}</td>
+                  <td>{{lst.create_date}}</td>
+                  <td>{{lst.due_date}}</td>
+                  <td>{{lst.status}}</td>
+                </tr>
+
+                {% endfor %}
+
+               
+                </tbody>
+
+
+
+              </table>
+
+
+
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js">
+</script>
+
+<script>
+  jQuery(document).ready(function ($) {
+    // Attach click event to the filter button
+    // $('#filterButton').click(function () {
+    //   // Get the search keywords from the input fields
+    //   var keyword1 = $('#category').val();
+    //   var keyword2 = $('#stsselect').val();
+    //   var keyword3 = $('#taskFdate').val();
+    //   var keyword4 = $('#taskTdate').val();
+
+    //   console.log(keyword1)
+    //   console.log(keyword2)
+
+
+    //   // Send an AJAX request to the server with the search keywords
+    //   $.ajax({
+    //     url: '/project/task_filer',  // Replace with your server endpoint
+    //     type: 'GET',
+    //     data: { 'category': keyword1, 'status': keyword2, 'fromdate': keyword3, 'todate': keyword4 },
+    //     dataType: 'json',
+    //     success: function (response) {
+    //       // Update the table with the filtered data
+    //       updateTable(response);
+    //     },
+    //     error: function (error) {
+    //       console.error('Error:', error);
+    //     }
+    //   });
+    // });
+
+    $('#mySelect').change(function () {
+      // Get the selected value
+      var selectedValue = {'data': $(this).val() };
+
+      // Do something with the selected value
+      console.log(selectedValue);
+      $.get('/project/sort_tak/', selectedValue, function (res) {
+              console.log(res);
+              if (res.status) {
+                  $('#project2').text('*This category is already added for this project');
+              }
+              else {
+                  $('#project2').text(' ');
+              }
+          });
+    });
+
+
+  });
+
+  // Function to update the table with filtered data
+  function updateTable(data) {
+    var tableBody = $('#dataTable tbody');
+    tableBody.empty();  // Clear existing rows
+
+    // Append new rows based on the filtered data
+    for (var i = 0; i < data.length; i++) {
+      var row = '<tr><td>' + data[i].name + '</td><td>' + data[i].age + '</td></tr>';
+      tableBody.append(row);
+    }
+  }
+
+  $('#filter-form').submit(function (event) {
+    // Prevent the default form submission
+    event.preventDefault();
+
+    // Serialize the form data
+    var formData = $(this).serialize();
+    console.log(formData)
+    // Make an AJAX request to the backend
+    $.ajax({
+      url: '/project/task_filter/',  // Replace with the actual backend endpoint
+      type: 'GET',
+      data: formData,
+      dataType: 'json',
+
+      success: function (data) {
+        // Process the filtered data and update your UI
+        console.log('Filtered Data:', data.filtered_data);
+        // Update your UI here with the filtered data
+
+        var tableBody = $('#dataTable');
+                      tableBody.empty();  // Clear existing rows
+                      data.filtered_data.forEach((i, index) => {
+                            let j = data.project_name[index];
+                            let k = data.list_name[index];
+                            console.log(i, j, k);
+                            const newRow = `
+                         <tr>
+                             <td>${j}</td>
+                             <td>${k}</td>
+                             <td>${i.task_title}</td>
+                             <td>${i.description}</td>
+                             <td>${i.create_date}</td>
+                             <td>${i.due_date}</td>
+                             <td>${i.status}</td>
+
+
+
+          
+                         </tr>`;
+                        tableBody.append(newRow);
+                            
+                        });
+
+
+        //  data.filtered_data.forEach(function(i) {
+        // // Append new rows based on the filtered data
+        // console.log(i)
+        // const newRow = `
+        //                 <tr>
+        //                     <td>${i}</td>
+        //                     <td>${i.list_id}</td>
+        //                     <td>${i.task_title}</td>
+        //                     <td>${i.description}</td>
+        //                     <td>${i.create_date}</td>
+        //                     <td>${i.due_date}</td>
+        //                     <td>${i.status}</td>
+
+
+        //                     <td>
+        //     <a href="/project/update_task/${i.id}" class="btn btn-warning"><i
+        //         class="bi bi-pencil-fill"></i></a>
+
+        //     <a href="/project/delete_task/${i.id}" class="btn btn-danger"
+        //       onclick="return confirm('Do you want to delete?')"><i class="bi bi-trash"></i></a>
+        //   </td>
+
+
+        //   <td>
+        //     <div class="dropdown dropstart">
+        //       <button class="btn" type="button" id="dropdownMenu2" data-bs-toggle="dropdown"
+        //         aria-expanded="false">
+        //         <i class="bi bi-three-dots-vertical"></i>
+        //       </button>
+        //       <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+        //         <li><a class="dropdown-item" href="/project/add_subtask/${i.id}">Add</a></li>
+        //         <li><a class="dropdown-item" href="/project/view_subtask/${i.id}">View</a></li>
+        //       </ul>
+        //     </div>
+
+        //   </td>
+        //                 </tr>`;
+        //                 tableBody.append(newRow);
+
+        //         });
+      },
+                  error: function (error) {
+                      console.log('Error:', error);
+                  }
+              });
+    });
+
+
+
+</script>
+</script>
+
+{% endblock content %}

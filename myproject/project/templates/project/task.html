@@ -1,0 +1,570 @@
+{% extends 'users/shared/base.html' %}
+
+
+
+{% block content %}
+
+
+<section class="section dashboard container " style="margin-left: 295px; margin-top: 100px; width: 78%;">
+  <div class="row">
+
+    <div class="col">
+      <div class="row">
+        <div class="col-12">
+          <div class="card recent-sales overflow-auto">
+            <div class="card-body">
+
+              <!-- <select name="sortoption" id="mySelect" class="mt-4">
+                <option value="">Select sorting option</option>
+                <option value="category_asc">Sort by Category (Ascending)</option>
+                <option value="category_desc">Sort by Category (Descending)</option>
+                <option value="status_asc">Sort by Status (Ascending)</option>
+                <option value="status_desc">Sort by Status (Descending)</option>
+
+              </select> -->
+
+              <div class="justify-content-end d-flex align-items-end ">
+
+                <a href="" class="btn add_task-btn" data-bs-toggle="modal" data-bs-target="#addtaskModal"
+                  style="background-color: #6f42c1; color: white;">Add New<i class="bi bi-plus"></i></a>
+              </div>
+
+
+              <form method="get" id="filter-form" action="">
+                {% csrf_token %}
+                <div class="justify-content-start d-flex align-items-start p-1 m-1">
+                  <label for="" class="ms-2">Category:</label>
+                  {{ tfill.category }}
+
+                  <label for="" class="ms-2">Task Status:</label>
+                  {{ tfill.statusoftask }}
+
+                  <label for="" class="ms-2">From:</label>
+                  {{ tfill.taskfromdate }}
+                  <label for="" class="ms-2">To:</label>
+                  {{ tfill.tasktodate }}
+                  <button type="submit" class="btn btn-primary ms-3" id="filterButton"><i
+                      class="bi bi-search"></i></button>
+                </div>
+
+
+
+              </form>
+
+              <table class="table table-bordered">
+                <tr>
+                  <th>PROJECT</th>
+                  <th>LIST</th>
+                  <th>TASK</th>
+                  <th>DESCRIPTION</th>
+                  <th>CREATE DATE</th>
+                  <th>DUE DATE</th>
+                  <th>STATUS</th>
+                  <th>ACTIONS</th>
+                  <th>SUBTASK</th>
+                </tr>
+
+                <tbody id="dataTable">
+
+
+                  {% for lst in view %}
+
+
+
+                  <tr>
+                    <td>{{ lst.list.project.project_title }}</td>
+                    <td>{{ lst.list.title }}</td>
+                    <td>{{lst.task_title}}</td>
+                    <td>{{lst.description}}</td>
+                    <td>{{lst.create_date}}</td>
+                    <td>{{lst.due_date}}</td>
+                    <td>
+                      {% if lst.status == 'Pending' %}
+                      <span class="text-primary">{{ lst.status }}</span>
+                      {% elif lst.status == 'In progress' %}
+
+                      <span class="text-warning">{{ lst.status }}</span>
+
+                      {% elif lst.status == 'Completed' %}
+                      <span class="text-success">{{ lst.status }}</span>
+
+                      {% else %}
+                      <p> - </p>
+                      {% endif %}
+                    </td>
+
+                    <td>
+                      <a href="" class="btn btn-warning edit_task-btn" data-bs-toggle="modal"
+                        data-bs-target="#edittaskModal" data-task-id="{{lst.id}}"><i class="bi bi-pencil-fill"></i></a>
+                      <a href="/project/delete_task/{{lst.id}}" class="btn btn-danger"
+                        onclick="return confirm('Do you want to delete?')"><i class="bi bi-trash"></i></a>
+                    </td>
+
+
+
+                    <td>
+                      <div class="dropdown dropstart">
+                        <button class="btn" type="button" id="dropdownMenu2" data-bs-toggle="dropdown"
+                          aria-expanded="false">
+                          <i class="bi bi-three-dots-vertical"></i>
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                          <li><a class="dropdown-item add_subtask-btn" href="" data-bs-toggle="modal"
+                              data-bs-target="#addsubtaskModal" data-task-id="{{lst.id}}">Add</a></li>
+                          <li><a class="dropdown-item" href="/project/view_subtask/{{lst.id}}">View</a></li>
+                        </ul>
+                      </div>
+
+                    </td>
+                    {% endfor %}
+                  </tr>
+
+                </tbody>
+              </table>
+
+
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- add task -->
+
+<div class="modal fade" id="addtaskModal" tabindex="-1" aria-labelledby="addFormModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="formModalLabel">Add Task</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+
+        <div class="container">
+          <span id="project2"></span>
+          <form class="form-detail mt-5" action="" method="post" id="task_add">
+            {% csrf_token %}
+
+            <div class="form-row mb-2" id="cat">
+              <label for="task">Project</label>
+              <select class="form-select" name="project" id="taskprojects">
+
+
+              </select>
+            </div>
+
+            <div class="form-row mb-2" id="cat">
+              <label for="task">Category</label>
+              <select class="form-select" name="lst" id="tasklist1">
+
+
+
+              </select>
+            </div>
+            <div class="form-row mb-2">
+              <label for="task">Task Name</label>
+              <input type="text" name="task" id="task" class="input-text inp" required>
+            </div>
+            <div class="form-row mb-2">
+              <label for="description">Description</label>
+              <input type="text" name="description" id="description" class="input-text inp" required>
+            </div>
+            <div class="form-row mb-2">
+              <label for="create_date">create_date</label>
+              <input type="date" name="create_date" id="create_date" class="input-text inp" required>
+            </div>
+            <div class="form-row mb-2">
+              <label for="due_date">due_date</label>
+              <input type="date" name="due_date" id="due_date" class="input-text inp" required>
+            </div>
+
+
+            <div class="form-row-last">
+              <input type="submit" name="save" id="taskadd" class="register" value="Save">
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- edit task -->
+<div class="modal fade" id="edittaskModal" tabindex="-1" aria-labelledby="addFormModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="formModalLabel">Edit Task</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+
+        <div class="container">
+          <span id="project2"></span>
+          <form class="form-detail mt-5" action="" method="post" id="edit_task">
+            {% csrf_token %}
+
+            <!-- {{form.as_p}} -->
+
+            <div class="form-row">
+              <label for="project">Task</label>
+              <input type="text" name="task" id="e_task" class="input-text inp" required>
+            </div>
+
+            <div class="form-row ">
+              <label for="description">Description</label>
+              <input type="text" name="description" id="e_description" class="input-text inp" required>
+            </div>
+
+            <div class="form-row ">
+              <label for="create_date">Created Date</label>
+              <input type="date" name="create_date" id="e_create_date" class="input-text inp" readonly required>
+            </div>
+
+            <div class="form-row ">
+              <label for="due_date">Due Date</label>
+              <input type="date" name="due_date" id="e_due_date" class="input-text inp" required>
+            </div>
+
+            <div class="form-row mb-2">
+              <label for="status">Status</label>
+              <select name="status" id="task_status" class="form-select">
+                <option value="Pending">Pending</option>
+                <option value="In progress">In progress</option>
+                <option value="Completed">Completed</option>
+              </select>
+            </div>
+
+
+
+            <div class="form-row-last">
+              <input type="submit" name="save" id="edittasksubmit" class="register" value="Save">
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- add subtask -->
+
+<div class="modal fade" id="addsubtaskModal" tabindex="-1" aria-labelledby="addFormModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="formModalLabel">Add Sub Task</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+
+        <div class="container">
+          <span id="project2"></span>
+          <form class="form-detail" action="" method="post" id="add_subtask">
+            {% csrf_token %}
+
+            <div class="">
+              <label for="task">Task</label>
+              <input type="hidden" name="a_task_h" id="a_task_h" class="input-text inp" required>
+              <input type="text" name="a_task" id="a_task" class="input-text inp" required>
+            </div>
+
+            <div class="form-row ">
+              <label for="subtask">Subtask title</label>
+              <input type="text" name="subtask" id="a_subtask" value="" class="input-text inp" required>
+            </div>
+
+
+
+            <!-- <div class="">
+                  <label for="status">Status</label>
+                  {{form.status}}
+
+              </div> -->
+
+            <div class="form-row-last">
+              <input type="submit" name="save" class="register" value="Save">
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js">
+</script>
+
+<script>
+  const addtaskbtn = document.querySelectorAll('.add_task-btn');
+  var projectIdr;
+  addtaskbtn.forEach(btn => {
+    btn.addEventListener('click', (event) => {
+      $.ajax({
+        url: '/project/add_task/',
+        method: 'GET',
+        dataType: 'json',
+        success: function (response) {
+          console.log(response.list)
+          // var selectListElement1 = "";
+
+          // for (let item of response.list) {
+          //   selectListElement1 += `<option value='${item.project_id}'>${item.project_name}</option>`;
+          // }
+
+          // document.getElementById('taskprojects').innerHTML = selectListElement1;
+          $('#taskprojects').append('<option value="">Select an option</option>');
+
+          $.each(response.list, function (index, item) {
+            
+            var option = '<option value="' + item.project_id + '">' + item.project_name + '</option>';
+            $('#taskprojects').append(option);
+          })
+         
+
+        },
+        error: function (xhr, status, error) {
+
+          console.error('Error fetching project data:', error);
+        }
+      });
+    });
+  });
+
+  $('#task_add').submit(function (event) {
+    event.preventDefault();
+    $.ajax({
+      url: '/project/add_task/',
+      type: 'POST',
+      data: $(this).serialize(),
+      dataType: 'json',
+      success: function (response) {
+
+        alert('New List Added!');
+        location.reload(true);
+        form.trigger('reset');
+        form.trigger('.data-bs-dismiss');
+
+
+      },
+
+    });
+  });
+
+  $('#taskprojects').on('change', function () {
+    var prj_id = $('#taskprojects').val();
+    $.ajax({
+      url: '/project/get_list/',
+      data: { "prj_id": prj_id },
+      success: function (response) {
+        console.log(response)
+        $('#tasklist1').empty();
+        $.each(response, function (index, value) {
+          console.log(value, 'here')
+
+          $.each(value, function (index, item) {
+            
+            var option = '<option value="' + item.id + '">' + item.title + '</option>';
+            $('#tasklist1').append(option);
+          })
+        });
+      }
+    });
+
+  });
+
+  const edittaskbtn = document.querySelectorAll('.edit_task-btn');
+  var taskIdr;
+  edittaskbtn.forEach(btn => {
+    btn.addEventListener('click', (event) => {
+      const task_Id = btn.getAttribute('data-task-id');
+      taskIdr = task_Id
+      console.log(taskIdr);
+      $.ajax({
+        url: '/project/get_task_data/' + taskIdr,
+        method: 'GET',
+        dataType: 'json',
+        success: function (response) {
+          //   alert('sss')
+          console.log(response)
+
+          $('#edit_task #e_task').val(response.task_name);
+          $('#edit_task #e_description').val(response.description);
+          $('#edit_task #e_create_date').val(response.start_date);
+          $('#edit_task #e_due_date').val(response.end_date);
+
+
+        },
+        error: function (xhr, status, error) {
+
+          console.error('Error fetching project data:', error);
+        }
+      });
+    });
+  });
+
+  $('#edittasksubmit').off('click').on('click', function (event) {
+    event.preventDefault();
+    $.ajax({
+
+      url: '/project/update_task/' + taskIdr,
+      method: 'POST',
+      data: $('#edit_task').serialize(),
+      dataType: 'json',
+      success: function (response) {
+
+        alert("Task updated");
+        $('#edit_task').trigger('.data-bs-dismiss');
+        location.reload(true);
+
+      },
+      error: function (xhr, status, error) {
+        console.log(xhr.status);
+        if (xhr.status === 400) {
+          var errors = xhr.responseJSON.errors;
+          console.log(errors);
+          for (var field in errors) {
+            var errorMessages = Array.isArray(errors[field]) ? errors[field].join('<br>') : errors[field];
+            $('#' + field + '-error').html(errorMessages);
+          }
+        } else {
+          console.error('Error editing project data:', error);
+        }
+      }
+    });
+  });
+
+  const addsubtaskbtn = document.querySelectorAll('.add_subtask-btn');
+  var taskIdr;
+  addsubtaskbtn.forEach(btn => {
+    btn.addEventListener('click', (event) => {
+      const task_Id = btn.getAttribute('data-task-id');
+      taskIdr = task_Id
+      console.log(taskIdr);
+      $.ajax({
+        url: '/project/get_task_data/' + taskIdr,
+        method: 'GET',
+        dataType: 'json',
+        success: function (response) {
+          //   alert('sss')
+          console.log(response)
+
+          $('#add_subtask #a_task_h').val(response.task_id);
+          $('#add_subtask #a_task').val(response.task_name);
+
+        },
+        error: function (xhr, status, error) {
+
+          console.error('Error fetching project data:', error);
+        }
+      });
+    });
+  });
+
+
+
+  $('#add_subtask').submit(function (event) {
+    event.preventDefault();
+    var form = $(this);
+    $.ajax({
+      url: '/project/add_subtask/',
+      type: 'POST',
+      data: $(this).serialize(),
+      dataType: 'json',
+      success: function (response) {
+
+        alert('New Subtask Added!');
+        location.reload(true);
+        form.trigger('reset');
+        form.trigger('.data-bs-dismiss');
+
+
+      },
+
+    });
+  });
+
+
+
+  $('#filter-form').submit(function (event) {
+    // Prevent the default form submission
+    event.preventDefault();
+
+    // Serialize the form data
+    var formData = $(this).serialize();
+    console.log(formData)
+    // Make an AJAX request to the backend
+    $.ajax({
+      url: '/project/task_filter/',  // Replace with the actual backend endpoint
+      type: 'GET',
+      data: formData,
+      dataType: 'json',
+
+      success: function (data) {
+        // Process the filtered data and update your UI
+        console.log('Filtered Data:', data.filtered_data);
+        // Update your UI here with the filtered data
+
+        var tableBody = $('#dataTable');
+                      tableBody.empty();  // Clear existing rows
+                      data.filtered_data.forEach((i, index) => {
+                            let j = data.project_name[index];
+                            let k = data.list_name[index];
+                            console.log(i, j, k);
+                            const newRow = `
+                         <tr>
+                             <td>${j}</td>
+                             <td>${k}</td>
+                             <td>${i.task_title}</td>
+                             <td>${i.description}</td>
+                             <td>${i.create_date}</td>
+                             <td>${i.due_date}</td>
+                             <td>${i.status}</td>
+
+
+                             <td>
+             <a href="/project/update_task/${i.id}" class="btn btn-warning"><i
+                 class="bi bi-pencil-fill"></i></a>
+
+             <a href="/project/delete_task/${i.id}" class="btn btn-danger"
+               onclick="return confirm('Do you want to delete?')"><i class="bi bi-trash"></i></a>
+           </td>
+
+
+           <td>
+             <div class="dropdown dropstart">
+               <button class="btn" type="button" id="dropdownMenu2" data-bs-toggle="dropdown"
+                 aria-expanded="false">
+                 <i class="bi bi-three-dots-vertical"></i>
+               </button>
+               <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                 <li><a class="dropdown-item" href="/project/add_subtask/${i.id}">Add</a></li>
+                 <li><a class="dropdown-item" href="/project/view_subtask/${i.id}">View</a></li>
+               </ul>
+             </div>
+
+           </td>
+                         </tr>`;
+                        tableBody.append(newRow);
+                            
+                        });
+      },
+                  error: function (error) {
+                      console.log('Error:', error);
+                  }
+              });
+    });
+
+
+
+</script>
+
+{% endblock content %}

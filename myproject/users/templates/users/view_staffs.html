@@ -1,0 +1,253 @@
+{% extends 'users/shared/base.html' %}
+
+{% block content %}
+
+<section class="section dashboard container " style="margin-left: 295px; margin-top: 100px; width: 78%;">
+  <div class="row">
+
+    <div class="col">
+      <div class="row">
+        <div class="col-12">
+          <div class="card recent-sales overflow-auto">
+            <div class="card-body">
+
+              <table class="table mt-5" >
+                <tr>
+                  <th>ID</th>
+                  <th>NAME</th>
+                  <th>EMAIL</th>
+                  <th>PHONE</th>
+                  <th>DOB</th>
+                  <th>ACTIONS</th>
+                </tr>
+
+
+                {% for i in emp %}
+                <tr>
+                  <td>{{i.id}}</td>
+                  <td>{{i.Fullname}}</td>
+                  <td>{{i.email}}</td>
+                  <td>{{i.phone}}</td>
+                  <td>{{i.dob}}</td>
+                  <td>
+                    <a href="/users/approve_user/{{i.id}}" class="btn btn-success"><i class="bi bi-check-lg"></i></a>
+                    <a href="/users/reject_user/{{i.id}}" class="btn btn-danger"><i class="bi bi-x"></i></a>
+
+                  </td>
+                  
+                </tr>
+                {% endfor %}
+
+              </table> <br><br><br>
+
+<hr>
+              <form class="mt-5" method="post">
+                {% csrf_token %}
+                <div class="row">
+                  <div class="col-3">
+                    <input type="text" class="form-control" placeholder="Enter name" name="name" size="5" id="myInput"
+                      onkeyup="myFunction()">
+                  </div>
+                </div>
+              </form>
+              <table class="table" id="myTable">
+                <tr>
+                  <th>ID</th>
+                  <th>NAME</th>
+                  <th>PHOTO</th>
+                  <th>DETAILS</th>
+                </tr>
+
+
+                {% for i in apr_emp %}
+                <tr>
+                  <td>{{i.id}}</td>
+                  <td>{{i.Fullname}}</td>
+                  <td>
+                    {% if i.photo == 'None' %}
+                <img src="/static/Login/images/default_profile.jpg" class="rounded-circle" width="50" height="50" >
+                {% else %}
+                <img src="/media/{{ user.photo }}" alt="Profile" id="dpimg" class="rounded-circle" width="50" height="50">
+                {% endif %}
+                  </td>
+                  <td>
+                    <a href="" class="btn text-info addjob-btn" data-bs-toggle="modal" data-bs-target="#myModal1"
+                      data-user-id="{{ i.id }}">View</a>
+                  </td>
+                </tr>
+                {% endfor %}
+
+              </table>
+
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+
+</section>
+
+<div class="modal" id="myModal1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Personal Informations</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+        <form class="form-detail" action="" method="post" id="admineditform">
+          {% csrf_token %}
+
+          <div class="row">
+
+            <div class="col">
+              <div class="form-row mb-2">
+                <label for="full-name"> Name</label>
+                <input type="text" name="fullname" id="a_e_name" class="input-text inp" value="{{i.Fullname}}" required>
+                <i class="fas fa-user"></i>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col">
+              <div class="form-row">
+                <label for="your-email"> Email</label>
+                <input type="email" name="emailid" id="a_e_email" class="input-text inp"  required>
+                <i class="fas fa-envelope"></i>
+              </div>
+            </div>
+            <div class="col">
+              <div class="form-row">
+                <label for="your-phone"> Phone Number</label>
+                <input type="number" name="phone" id="a_e_phone" class="input-text inp" required>
+                <i class="fas fa-envelope"></i>
+              </div>
+            </div>
+            
+          </div>
+          <div class="row">
+            <div class="col">
+              <div class="form-row">
+                <label for="your-dob"> Dob</label>
+                <input type="date" name="dob" id="a_e_dob" class="input-text inp" required>
+                <i class="fas fa-envelope"></i>
+              </div>
+            </div>
+            <div class="col">
+              <div class="form-row">
+                <label for="your-job">Job</label>
+                <select name="job" id="a_e_job" class="form-select">
+                  <option value="Sr.Python Developer">Sr.Python Developer</option>
+                  <option value="Jr.Python Developer">Jr.Python Developer</option>
+                </select>
+                
+              </div>
+            </div>
+          </div>
+
+
+          <div class="form-row-last">
+            <input type="submit" id="savejobsubmit" class="register" value="Save">
+          </div>
+        </form>
+      </div>
+
+
+
+    </div>
+  </div>
+</div>
+
+<script>
+  function myFunction() {
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInput");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) {
+      td = tr[i].getElementsByTagName("td")[1];
+      if (td) {
+        txtValue = td.textContent || td.innerText;
+        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+          tr[i].style.display = "";
+        } else {
+          tr[i].style.display = "none";
+        }
+      }
+    }
+  }
+
+</script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+  const editBtns = document.querySelectorAll('.addjob-btn');
+    var projectIdr;
+    editBtns.forEach(btn => {
+        btn.addEventListener('click', (event) => {
+
+            const projectId = btn.getAttribute('data-user-id');
+            console.log(projectId);
+            projectIdr=projectId
+            $.ajax({
+            url: '/users/admin_add_job_get/' + projectId , 
+            method: 'GET',
+            dataType: 'json',
+            success: function(response) {
+              // console.log(response)
+            //     var editor = CKEDITOR.instances['edit_project_dec'];
+            //     editor.setData(response.description);
+                $('#admineditform #a_e_name').val(response.name);
+                $('#admineditform #a_e_email').val(response.email);
+                $('#admineditform #a_e_phone').val(response.phone);
+                $('#admineditform #a_e_dob').val(response.dob);
+
+            }
+        });
+    });
+    });
+
+
+    $('#savejobsubmit').off('click').on('click', function(event) {
+        event.preventDefault();
+        $.ajax({
+            
+            url: '/users/admin_add_job_post/' + projectIdr, 
+            method: 'POST',
+            data: $('#admineditform').serialize(),
+            dataType: 'json',
+            success: function(response) {
+                location.reload(true);
+                form.trigger('reset');
+                form.trigger('.data-bs-dismiss');
+                
+            },
+            error: function(xhr, status, error) {
+            console.log(xhr.status);
+            if (xhr.status === 400) {
+                    var errors = xhr.responseJSON.errors;
+                    console.log(errors);
+            for (var field in errors) {
+                var errorMessages = Array.isArray(errors[field]) ? errors[field].join('<br>') : errors[field];
+                $('#' + field + '-error').html(errorMessages);
+            }
+            } else {
+                console.error('Error editing project data:', error);
+            }               
+            }
+        });
+    });
+</script>
+{% endblock content %}

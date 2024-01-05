@@ -1,0 +1,440 @@
+{% extends 'users/shared/base.html' %}
+
+{% block content %}
+
+<section class="section dashboard container " style="margin-left: 295px; margin-top: 100px; width: 78%;">
+  <div class="row">
+
+    <div class="col">
+      <div class="row">
+        <div class="col-12">
+          <div class="card recent-sales overflow-auto">
+            <div class="card-body">
+
+              <h5 class="card-title"></h5>
+              <div class="justify-content-end d-flex align-items-end mb-2">
+                <a href="" class="btn" style="background-color: #6f42c1; color: white;" data-bs-toggle="modal"
+                  data-bs-target="#addFormModal">Add New<i class="bi bi-plus"></i></a>
+              </div>
+              <table class="table" id="projects-table">
+                <tr>
+                  <th>TITLE</th>
+                  <th>DESCRIPTION</th>
+                  <th>CREATE DATE</th>
+                  <th>DUE DATE</th>
+                  <th>STATUS</th>
+                  <th>ACTIONS</th>
+
+                </tr>
+
+
+                {% for i in view %}
+
+                <tr>
+                  <td>{{i.project_title}}</td>
+                  <td>{{i.description}}</td>
+                  <td>{{i.create_date}}</td>
+                  <td>{{i.due_date}}</td>
+                  <td>
+                    {% if i.status == 'Pending' %}
+                    <span class="text-primary">{{ i.status }}</span>
+                    {% elif i.status == 'In progress' %}
+
+                    <span class="text-warning">{{ i.status }}</span>
+
+                    {% elif i.status == 'Completed' %}
+                    <span class="text-success">{{ i.status }}</span>
+
+                    {% else %}
+                    <p> - </p>
+                    {% endif %}
+                  </td>
+
+                  <td>
+                    <div class="dropdown dropstart">
+                      <button class="btn" type="button" id="dropdownMenu2" data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                        <i class="bi bi-three-dots-vertical"></i>
+                      </button>
+                      <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                        <li><a href="#" class="dropdown-item edit-btn" data-bs-toggle="modal"
+                            data-bs-target="#editproject" data-project-id="{{i.id}}">Edit</a></li>
+                        <li><a class="dropdown-item " href="/project/delete_project/{{i.id}}">Delete</a></li>
+                        <li><a class="dropdown-item pro_ass-btn" href="" data-bs-toggle="modal"
+                            data-bs-target="#assign_pro" data-project-id="{{i.id}}">Assign Project to team</a></li>
+                        <li><a a class="dropdown-item pro_team-btn" href="" data-bs-toggle="modal"
+                          data-bs-target="#view_pro_team" data-project-id="{{i.id}}">View project team</a></li>
+                      </ul>
+                    </div>
+                    
+
+
+                  </td>
+                </tr>
+                {% endfor %}
+
+              </table>
+
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
+{{user}}
+<!-- add project -->
+
+<div class="modal fade" id="addFormModal" tabindex="-1" aria-labelledby="addFormModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="formModalLabel">Project</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+
+        <div class="container">
+          <span id="project2"></span>
+          <form class="form-detail mt-5" action="" method="post" id="project_add">
+            {% csrf_token %}
+            {{ form.as_p }}
+
+            <div class="form-row-last">
+              <input type="submit" name="save" class="register" value="Save">
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- edit project -->
+
+<div class="modal fade" id="editproject" tabindex="-1" aria-labelledby="editFormModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="formModalLabel"> EditProject</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+
+        <div class="container">
+          <span id="project2"></span>
+
+          <form class="form-detail mt-5" action="" method="post" id="edit_project">
+            {% csrf_token %}
+            {{ edit_p.as_p }}
+
+            <div class="form-row-last">
+              <input type="submit" name="save" id="editprojectSubmit" class="register" value="Save">
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Assign project to users -->
+
+<div class="modal fade" id="assign_pro" tabindex="-1" aria-labelledby="editFormModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="formModalLabel"> EditProject</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <span id="project4"></span>
+
+        <div class="container"></div>
+          <form class="form-detail mt-5" action="" method="post" id="assign_project">
+            {% csrf_token %}
+            <div class="mb-3 mt-3">
+              <label for="project" class="form-label">Project:</label>
+              <input type="text" class="form-control" id="project_u" value="" name="project"
+                readonly>
+            </div>
+
+            <div class="mb-3">
+              <select multiple class="form-select" name="users" id="user_floating">
+
+              </select>
+            </div>
+
+            <div class="form-row-last">
+              <input type="submit" name="save" class="register" value="Save">
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- view project team -->
+<div class="modal fade" id="view_pro_team" tabindex="-1" aria-labelledby="teamFormModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="formModalLabel"> EditProject</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <h3 class="text-center">Team</h3>
+                  
+                  
+              <div id="team_list">
+
+              </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js">
+</script>
+
+<script>
+  jQuery(document).ready(function ($) {
+    // Your jQuery code here
+    $('#projectname').keyup(function () {
+      data = { 'project': $(this).val() };
+      console.log(data);
+      $.get('/project/check_project/', data, function (res) {
+        console.log(res);
+        if (res.status) {
+          $('#project2').text('*This project is already added');
+        }
+        else {
+          $('#project2').text(' ');
+        }
+      });
+    });
+  });
+
+  $('#project_add').submit(function (event) {
+    event.preventDefault();
+    var form = $(this);
+    $.ajax({
+      url: '/project/add_project/',
+      type: 'POST',
+      data: $(this).serialize(),
+      dataType: 'json',
+      success: function (response) {
+
+        alert('New Project Added!');
+        location.reload(true);
+        form.trigger('reset');
+        form.trigger('.data-bs-dismiss');
+      },
+      error: function (xhr, status, error) {
+        if (xhr.status === 400) {
+          var errors = JSON.parse(xhr.responseText).errors;
+        } else {
+          alert('Something Went wrong');
+        }
+      }
+    });
+  });
+
+
+  const editBtns = document.querySelectorAll('.edit-btn');
+  var projectIdr;
+  editBtns.forEach(btn => {
+    btn.addEventListener('click', (event) => {
+
+      const projectId = btn.getAttribute('data-project-id');
+      console.log(projectId);
+      projectIdr = projectId
+      $.ajax({
+        url: '/project/get_p_data/' + projectId,
+        method: 'GET',
+        dataType: 'json',
+        success: function (response) {
+          // alert('sss')
+          $('#edit_project #projectname').val(response.projectname);
+          $('#edit_project #p_description').val(response.description);
+          $('#edit_project #p_create_date').val(response.startdate);
+          $('#edit_project #p_due_date').val(response.enddate);
+          $('#edit_project #p_status').val(response.status);
+          projectIdr = response.project_id;
+
+        },
+        error: function (xhr, status, error) {
+
+          console.error('Error fetching project data:', error);
+        }
+      });
+    });
+  });
+
+
+  $('#editprojectSubmit').off('click').on('click', function (event) {
+    event.preventDefault();
+
+
+    $.ajax({
+
+      url: '/project/edit_p/' + projectIdr,
+      method: 'POST',
+      data: $('#edit_project').serialize(),
+      dataType: 'json',
+      success: function (response) {
+
+        alert("Project updated");
+        $('#edit_project').trigger('.data-bs-dismiss');
+        location.reload(true);
+
+      },
+      error: function (xhr, status, error) {
+        console.log(xhr.status);
+        if (xhr.status === 400) {
+          var errors = xhr.responseJSON.errors;
+          console.log(errors);
+          for (var field in errors) {
+            var errorMessages = Array.isArray(errors[field]) ? errors[field].join('<br>') : errors[field];
+            $('#' + field + '-error').html(errorMessages);
+          }
+        } else {
+          console.error('Error editing project data:', error);
+        }
+      }
+    });
+
+
+
+
+  });
+
+  const ass_p_btn = document.querySelectorAll('.pro_ass-btn');
+      var projectIdr;
+      ass_p_btn.forEach(btn => {
+        btn.addEventListener('click', (event) => {
+
+          const project_Id = btn.getAttribute('data-project-id');
+          projectIdr = project_Id
+          console.log(projectIdr);
+
+          $.ajax({
+            url: '/project/pro_to_u/' + projectIdr,
+            method: 'GET',
+            dataType: 'json',
+            success: function (response) {
+
+              console.log(response.users)
+                $('#assign_project #project_u').val(response.project.projectname);
+              
+                var selectElement = "";
+                for (let item of response.users) {
+                    selectElement += `<option value='${item.id}'>${item.name}</option>`;
+                }
+
+// Set the HTML content of the 'op_u' element
+document.getElementById('user_floating').innerHTML = selectElement;
+
+
+              
+            },
+            error: function (xhr, status, error) {
+
+              console.error('Error fetching project data:', error);
+            }
+          });
+        });
+      });
+
+      $('#assign_project').submit(function(event) {
+        event.preventDefault();
+        var form = $(this); 
+        $.ajax({
+            url: '/project/pro_to_u/' + projectIdr,
+            type: 'POST',
+            data: $(this).serialize(),
+            dataType: 'json', 
+            success: function(response) {
+
+                alert('New Project Added!');
+                location.reload(true);
+                form.trigger('reset');
+                form.trigger('.data-bs-dismiss');
+                
+                
+            },
+          
+        });
+      });
+
+
+      jQuery(document).ready(function ($) {
+      // Your jQuery code here
+      $('#user_floating').change(function () {
+          data = { 'users_id': $(this).val(),'project':$('#project_u').val()};
+          console.log(data);
+          $.get('/project/check_user/', data, function (res) {
+            console.log(res.status)
+              console.log(res['users_name']);
+              if (res.status) {            
+                  $('#project4').text('*This project is already assigned for'+ " " + res['users_name']);
+              }
+              else {
+                  $('#project4').text(' ');
+              }
+          });
+      });
+  });
+
+  const viewteamBtns = document.querySelectorAll('.pro_team-btn');
+  var projectIdr;
+  viewteamBtns.forEach(btn => {
+    btn.addEventListener('click', (event) => {
+
+      const projectId = btn.getAttribute('data-project-id');
+      console.log(projectId);
+      projectIdr = projectId
+      $.ajax({
+        url: '/project/v_project_team/' + projectId,
+        method: 'GET',
+        dataType: 'json',
+        success: function (response) {
+          console.log(response.project_team)
+              
+                var selectElement1 = "";
+                for (let item of response.project_team) {
+                    selectElement1 += `<ul class="list-group" style="margin-left: 100px; width: 50%;">
+                
+                <li class="list-group-item "><span >${item.user_name}</span> <a href="/project/removeu_from_team/${item.user_id}" class="btn btn-danger" style="margin-left: 100px;">Remove</a></li>
+            </ul>`;
+                }
+                
+        document.getElementById('team_list').innerHTML = selectElement1;
+        },
+        error: function (xhr, status, error) {
+          console.error('Error fetching project data:', error);
+        }
+      });
+    });
+  });
+
+
+
+</script>
+
+
+
+
+{% endblock content %}

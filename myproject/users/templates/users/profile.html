@@ -1,0 +1,314 @@
+{% include 'users/shared/base.html' %}
+{% load static %}
+{% if request.user.is_authenticated and request.user.is_superuser == 1 %}
+
+<section class="section dashboard container justify-content-center d-flex align-items-center "
+  style=" margin-top: 100px; ;">
+
+  <div class="row">
+
+
+    <div class="col">
+
+      <div class="row">
+        <div class="col-12">
+          <div class="card recent-sales overflow-auto">
+            <div class="card-body">
+              <a class="me-2" href="{% url 'admin_dashboard' %}"><i class="bi bi-arrow-left"
+                  style="font-size:30px;"></i></a>
+
+              <div class="container">
+                {% if messages %}
+                <div class="alert alert-success alert-dismissible fade show" role="alert" style="height: 50px;">
+                  <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+
+                  <ul class="messages">
+                    {% for message in messages %}
+                    <li {% if message.tags %} class="{{ message.tags }} list-unstyled" {% endif %}>{{ message }}</li>
+                    {% endfor %}
+                  </ul>
+
+                </div>
+                {% endif %}
+
+               
+
+                <div class="profile-card pt-4 d-flex flex-column align-items-center" >
+                  {% if user.photo == 'None' %}
+                  <img src="/static/Login/images/default_profile.jpg" class="rounded-circle" width="200" height="200" >
+                  {% else %}
+                  <img src="/media/{{ user.photo }}" alt="Profile" id="dpimg" class="rounded-circle" width="200" height="200">
+                  {% endif %}
+                  <!-- Profile Edit Form -->
+                  <form action="" method="post" enctype="multipart/form-data" id="profileform" >
+                    {% csrf_token %}
+          
+                        {{data}}
+                        <!-- <input type="file" id="profileImageInput" style="display: none;"> -->
+                          <div class="pt-2 d-flex" >
+                              <a href="#" class="btn btn-primary btn-sm me-3" id="uploadImage" title="Upload new profile image">Edit Profile</a>
+                              <a href="#" class="btn btn-danger btn-sm" id="removeImage" title="Remove my profile image">Remove<i class="bi bi-trash"></i></a>
+                          </div>
+  
+                    </form>
+
+                   
+
+                <form class="form-detail mt-5" action="" method="post" id="project_add">
+                  {% csrf_token %}
+                  <h4>Personal Informations</h4> 
+                  <hr><br>
+                  <div class="row mb-3">
+                    <label for="full-name" class="col-md-4 col-lg-4 col-form-label">Name: </label>
+                    <div class="col-md-8 col-lg-8">
+                      <input type="text" name="fullname" id="name" class="input-text inp" value="{{user.Fullname}}" required>
+
+                    </div>
+                  </div>
+
+
+                  <div class="row mb-3">
+                    <label for="job" class="col-md-4 col-lg-4 col-form-label">Job: </label>
+                    <div class="col-md-8 col-lg-8">
+                      <input type="text" name="job" id="job" class="input-text inp" value="{{user.job}}" >
+
+                    </div>
+                  </div>
+
+                  <div class="row mb-3">
+                    <label for="email" class="col-md-4 col-lg-4 col-form-label">Email: </label>
+                    <div class="col-md-8 col-lg-8">
+                      <input type="email" name="emailid" id="email" class="input-text inp" value="{{user.email}}" >
+
+                    </div>
+                  </div>
+
+
+                  <div class="row mb-3">
+                    <label for="phone" class="col-md-4 col-lg-4 col-form-label">Phone: </label>
+                    <div class="col-md-8 col-lg-8">
+                      <input type="number" name="phone" id="phone" class="input-text inp" value="{{user.phone}}" >
+
+                    </div>
+                  </div>
+
+                  <div class="row mb-3">
+                    <label for="dob" class="col-md-4 col-lg-4 col-form-label">DOB: </label>
+                    <div class="col-md-8 col-lg-8">
+                      <input type="date"  name="dob1" id="dob" class="input-text inp" value="{{user.dob | date:'Y-m-d'}}" >
+
+                    </div>
+                  </div>
+
+                  <div class="form-row-last">
+                    <input type="submit" name="Edit" class="register" value="Edit">
+                  </div>
+                </form>
+
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+
+{% elif request.user.is_authenticated and request.user.is_superuser == 0 and request.user.is_staff == 1 %}
+
+<section class="section dashboard container justify-content-center d-flex align-items-center "
+  style=" margin-top: 100px; ;">
+
+  <div class="row">
+
+
+    <div class="col">
+
+      <div class="row">
+        <div class="col-12">
+          <div class="card recent-sales overflow-auto">
+            <div class="card-body">
+              <a class="me-2" href="{% url 'admin_dashboard' %}"><i class="bi bi-arrow-left"
+                  style="font-size:30px;"></i></a>
+
+              <div class="container">
+                {% if messages %}
+                <div class="alert alert-success alert-dismissible fade show" role="alert" style="height: 50px;">
+                  <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+
+                  <ul class="messages">
+                    {% for message in messages %}
+                    <li {% if message.tags %} class="{{ message.tags }} list-unstyled" {% endif %}>{{ message }}</li>
+                    {% endfor %}
+                  </ul>
+
+                </div>
+                {% endif %}
+
+               
+
+                <div class="profile-card pt-4 d-flex flex-column align-items-center" >
+                  {% if user.photo == 'None' %}
+                  <img src="/static/Login/images/default_profile.jpg" class="rounded-circle" width="200" height="200" >
+                  {% else %}
+                  <img src="/media/{{ user.photo }}" alt="Profile" id="dpimg" class="rounded-circle" width="200" height="200">
+                  {% endif %}
+                  <!-- Profile Edit Form -->
+                  <form action="" method="post" enctype="multipart/form-data" id="profileform" >
+                    {% csrf_token %}
+          
+                        {{data}}
+                        <!-- <input type="file" id="profileImageInput" style="display: none;"> -->
+                          <div class="pt-2 d-flex" >
+                              <a href="#" class="btn btn-primary btn-sm me-3" id="uploadImage" title="Upload new profile image">Edit Profile</a>
+                              <a href="#" class="btn btn-danger btn-sm" id="removeImage" title="Remove my profile image">Remove<i class="bi bi-trash"></i></a>
+                          </div>
+  
+                    </form>
+
+                   
+
+                <form class="form-detail mt-5" action="" method="post" id="project_add">
+                  {% csrf_token %}
+                  <h4>Personal Informations</h4> 
+                  <hr><br>
+                  <div class="row mb-3">
+                    <label for="full-name" class="col-md-4 col-lg-4 col-form-label">Name: </label>
+                    <div class="col-md-8 col-lg-8">
+                      <input type="text" name="fullname" id="name" class="input-text inp" value="{{user.Fullname}}" required>
+
+                    </div>
+                  </div>
+
+
+                  <div class="row mb-3">
+                    <label for="job" class="col-md-4 col-lg-4 col-form-label">Job: </label>
+                    <div class="col-md-8 col-lg-8">
+                      <input type="text" name="job" id="job" class="input-text inp" readonly value="{{user.job_type}}" >
+
+                    </div>
+                  </div>
+
+                  <div class="row mb-3">
+                    <label for="email" class="col-md-4 col-lg-4 col-form-label">Email: </label>
+                    <div class="col-md-8 col-lg-8">
+                      <input type="email" name="emailid" id="email" class="input-text inp" value="{{user.email}}" >
+
+                    </div>
+                  </div>
+
+
+                  <div class="row mb-3">
+                    <label for="phone" class="col-md-4 col-lg-4 col-form-label">Phone: </label>
+                    <div class="col-md-8 col-lg-8">
+                      <input type="number" name="phone" id="phone" class="input-text inp" value="{{user.phone}}" >
+
+                    </div>
+                  </div>
+
+                  <div class="row mb-3">
+                    <label for="dob" class="col-md-4 col-lg-4 col-form-label">DOB: </label>
+                    <div class="col-md-8 col-lg-8">
+                      <input type="date"  name="dob1" id="dob" class="input-text inp" value="{{user.dob | date:'Y-m-d'}}" >
+
+                    </div>
+                  </div>
+
+                  <div class="form-row-last">
+                    <input type="submit" name="Edit" class="register" value="Edit">
+                  </div>
+                </form>
+
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+{% endif %}
+
+<script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js">
+
+</script>
+
+<script>
+
+
+  $('#uploadImage').on('click', function(event) {
+    event.preventDefault();
+    $('#profileImageInput').click();
+});
+
+$('#profileImageInput').on('change', function() {
+    uploadProfileImage();
+});
+
+function uploadProfileImage() {
+    var formData = new FormData();
+    // console.log(typeof formData)
+    formData.append('profile_image', $('#profileImageInput')[0].files[0]);
+    const csrfToken = $('input[name="csrfmiddlewaretoken"]').val();  
+    // console.log(formData)
+    $.ajax({
+        type: 'POST',
+        url: '/users/edit_prof_pic/',
+        data: formData,
+        processData: false,
+        contentType: false,
+        headers: { 'X-CSRFToken': csrfToken }, 
+        success: function(data) {
+
+            if (data.success) {
+                updateProfileImage();
+            }
+        },
+    });
+
+
+    function updateProfileImage() {
+    $.ajax({
+        type: 'GET',
+        url: '/users/view_prof_pic/',
+        success: function(data) {
+          // alert('looo')
+            // $('#profileimg').attr('src', data.photo);
+            $('#dpimg').attr('src', data.photo);
+        },
+    });
+}
+
+}
+
+$('#removeImage').click(function(e) {
+    e.preventDefault();
+    const csrfToken = $('input[name="csrfmiddlewaretoken"]').val();  
+
+    $.ajax({
+      type: 'POST',
+      url: '/users/remove_prof_pic/',
+      headers: { 'X-CSRFToken': csrfToken }, 
+      success: function (data) {
+        $('#dpimg').attr('src', '/static/Login/images/default_profile.jpg');
+      },
+      error: function (xhr, errmsg, err) {
+      }
+    });
+  });
+
+</script>

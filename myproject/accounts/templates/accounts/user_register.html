@@ -1,0 +1,175 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Form-v5 by Colorlib</title>
+    <!-- Mobile Specific Metas -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <!-- Font-->
+    <link rel="stylesheet" type="text/css" href="{% static 'Register/css/roboto-font.css' %}">
+    <!-- <link rel="stylesheet" type="text/css" href="fonts/font-awesome-5/css/fontawesome-all.min.css"> -->
+    <!-- Main Style Css -->
+    <link rel="stylesheet" href="{% static 'Register/css/style.css' %}" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+</head>
+
+<body class="form-v5">
+    <div class="page-content ">
+        <div class="form-v5-content">
+
+            <a href="{% url 'index' %}"><i class="bi bi-arrow-left" style="font-size:30px;"></i></a>
+
+            <form class="form-detail" action="" method="post" id="signupform">
+                {% csrf_token %}
+
+                <h2>Register Form</h2>   
+
+                <div class="row">
+
+                    <div class="col">
+                        <div class="form-row mb-2">
+                            <!-- <label for="full-name">Full Name</label> -->
+                            <input type="text" name="fullname" id="name" class="input-text inp" placeholder="Your Name" required>
+                            <i class="fas fa-user"></i>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-row">
+                            <!-- <label for="your-email">Your Email</label> -->
+                            <input type="email"  name="emailid" id="email" class="input-text inp" placeholder="Your Email" required>
+                            <i class="fas fa-envelope"></i>
+                            <span id="email1"></span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <div class="form-row">
+                            <!-- <label for="your-email">Your Phone Number</label> -->
+                            <input type="number" name="phone" id="phone" class="input-text inp" placeholder="Your Phone" required>
+                            <i class="fas fa-envelope"></i>
+                            <span id="email1"></span>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-row">
+                            <!-- <label for="your-email">Your Phone Number</label> -->
+                            <input type="date" name="dob" id="dob" class="input-text inp" placeholder="Your dob" required>
+                            <i class="fas fa-envelope"></i>
+                            <span id="email1"></span>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div class="row">
+                    <div class="col">
+                        <div class="form-row">
+                            <!-- <label for="password">Password</label> -->
+                            <input type="password" name="password" id="pass" class="input-text inp" placeholder="Your Password"
+                                required>
+                            <i class="fas fa-lock"></i>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-row">
+                            <!-- <label for="password">Confirm Password</label> -->
+                            <input type="password" name="confirm_password" id="cpass" class="input-text inp"
+                                placeholder="Your Password" required>
+                            <i class="fas fa-lock"></i>
+                        </div>
+                    </div>
+                </div>
+
+                
+                
+                
+                
+                
+
+                <div class="form-row-last">
+                    <input type="submit" name="register" class="register" value="Register">
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js">
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('#email').keyup(function () {
+                data = { 'email': $(this).val() }
+                console.log(data);
+                $.get('/check_mail/', data, function(res) {
+                    // console.log(res)
+                    if (res.status) {
+                        $('#email1').text('*This email is already taken');
+                    }
+                    else {
+                        $('#email1').text(' ');
+                    }
+                })
+            });
+        
+
+            $('#signupform').validate({ // initialize the plugin
+                rules: {
+                    password: {
+                        minlength: 8,
+                    },
+                    confirm_password: {
+                        minlength: 8,
+                        equalTo: '#pass'
+                    },
+                    phone:{
+                        minlength:10
+                    }
+                
+                },
+                messages: {
+                    fullname: " Please enter your fullname",
+                    password: {
+                        required: " Please enter a password",
+                        minlength:
+                            " Your password must be consist of at least 8 characters"
+                    },
+                    confirm_password: {
+                        required: " Please enter a password",
+                        minlength:
+                            " Your password must be consist of at least 8 characters",
+                        equalTo: " Please enter the same password as above"
+                    },
+                    phone:{
+                        required:'Please enter your Phone number',
+                        minlength:'Phone number must have 10 numbers'
+                    },
+                    dob:{
+                        required:'Please enter your dob'
+                    },
+                    email:{
+                        required:'Please enter your Email',
+                        
+                        
+                    }
+
+                }
+
+
+                
+            });
+        });
+    </script>
+</body>
+
+</html>
+
+
